@@ -1,0 +1,20 @@
+.bodybg{
+    -fx-min-width: 800px;
+    -fx-min-height: 600px;
+
+    -fx-pref-width: 1080px;
+    -fx-pref-height: 720px;
+
+    -fx-max-width: 1920px;
+    -fx-max-height: 1080px;
+
+    -fx-background-image: url("../image/pic3046708.png");
+    -fx-background-size: 100% 100%;
+
+    -fx-alignment: center;
+}
+
+.menuitem{
+    -fx-pref-width: inherit;
+    -fx-pref-height: inherit;
+}

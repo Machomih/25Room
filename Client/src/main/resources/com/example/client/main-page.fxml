@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane minWidth="-Infinity" prefHeight="720" prefWidth="1089.0" styleClass="bodybg" stylesheets="@css/mainPage.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.client.controllers.MainPageController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="720.0" prefWidth="1080.0">
+         <children>
+            <Label fx:id="welcomeLabel" prefHeight="67.0" prefWidth="665.0" text="Label" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="35.0" />
+               </font></Label>
+
+             <HBox alignment="BOTTOM_CENTER" prefHeight="56.0" prefWidth="1080.0" spacing="10">
+                 <TextField fx:id="gameNameTextField" alignment="BOTTOM_LEFT" prefHeight="30.0" prefWidth="663.0" promptText="Search" />
+             </HBox>
+            <VBox alignment="CENTER" prefHeight="423.0" prefWidth="1080.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="318.0" prefWidth="1080.0">
+                     <children>
+            
+                         <ListView fx:id="gameListView" pickOnBounds="false" prefHeight="182.0" prefWidth="662.0">
+             </ListView>
+                     </children>
+                  </HBox>
+                  <Label fx:id="noGameNameLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="41.0" prefWidth="664.0" text="" textFill="#f5f3f3">
+                     <font>
+                        <Font size="25.0" />
+                     </font></Label>
+               </children>
+            </VBox>
+
+             <HBox alignment="CENTER" prefHeight="81.0" prefWidth="1023.0" spacing="10">
+                 <Button fx:id="createButton" onAction="#handleCreateButtonAction" text="Create" />
+                 <Button fx:id="enterButton" text="Enter" />
+             </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

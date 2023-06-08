@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox minWidth="-Infinity" styleClass="bodybg" stylesheets="@css/mainPage.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.client.controllers.LoginRegisterController">
+    <children>
+      <VBox alignment="CENTER" layoutX="400.0" prefHeight="720.0" prefWidth="309.0">
+         <children>
+                <VBox alignment="BOTTOM_CENTER" prefHeight="272.0" prefWidth="281.0">
+                    <children>
+                        <TextField fx:id="usernameField" alignment="CENTER" prefHeight="24.0" prefWidth="188.0" promptText="Enter username" VBox.vgrow="NEVER" />
+                        <PasswordField fx:id="passwordField" alignment="CENTER" prefHeight="24.0" prefWidth="188.0" promptText="Enter password" VBox.vgrow="SOMETIMES" />
+                        <Label fx:id="warningLabel" alignment="CENTER" prefHeight="54.0" prefWidth="188.0" textAlignment="CENTER" textFill="red" wrapText="true" />
+                    </children>
+                </VBox>
+                  <HBox alignment="TOP_CENTER" prefHeight="24.0" prefWidth="188.0" style="-fx-spacing: 60;">
+                      <children>
+                          <Button mnemonicParsing="false" onAction="#handleLoginButtonAction" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: red;" text="Log In" textAlignment="CENTER" textFill="WHITE">
+                              <font>
+                                  <Font name="DejaVuMathTeXGyre-Regular" size="13.0" />
+                              </font>
+                          </Button>
+                          <Button mnemonicParsing="false" onAction="#handleRegisterButtonAction" prefHeight="24.0" prefWidth="78.0" style="-fx-background-color: blue;" text="Register" textAlignment="CENTER" textFill="WHITE" />
+                      </children>
+                  </HBox>
+         </children>
+      </VBox>
+    </children>
+</HBox>
