@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8081") // Allow requests from the client running on localhost:8081
@@ -53,15 +54,34 @@ public class ConnectionController {
         String checkQuery = "SELECT COUNT(*) FROM users WHERE username = ?";
         int count = jdbcTemplate.queryForObject(checkQuery, Integer.class, username);
 
-        if (count > 0) {
+        if (count != 0)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists. Please choose a different username");
-        }
+
+        if (!passwordRequirements(password))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password must contain at least 6 characters, 1 uppercase, 1 number");
 
         String insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
         jdbcTemplate.update(insertQuery, username, password);
 
-
         return ResponseEntity.status(HttpStatus.OK).body("Registered successful!");
+    }
+
+    private boolean passwordRequirements(String password) {
+        if (password.length() < 6)
+            return false;
+
+        Pattern lowercasePattern = Pattern.compile("[a-z]");
+        Pattern uppercasePattern = Pattern.compile("[A-Z]");
+        Pattern numberPattern = Pattern.compile("\\d");
+
+        if (!lowercasePattern.matcher(password).find())
+            return false;
+        if (!uppercasePattern.matcher(password).find())
+            return false;
+        if (!numberPattern.matcher(password).find())
+            return false;
+
+        return true;
     }
 
     @PostConstruct

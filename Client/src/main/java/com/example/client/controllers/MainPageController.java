@@ -1,11 +1,14 @@
 package com.example.client.controllers;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 
 public class MainPageController {
-    private String serverUrl = "http://localhost:8081";
+    private final String serverUrl = "http://localhost:8081";
 
     @FXML
     private Label welcomeLabel;
@@ -31,12 +34,55 @@ public class MainPageController {
     private TextField gameNameTextField;
 
     @FXML
-    private ListView<String> gameListView;
+    private TableView<Game> gameTable;
+
+    @FXML
+    private TableColumn<Game,String> gameNameColumn;
+
+    @FXML
+    private TableColumn<Game,Integer> playersConnectedColumn;
 
     @FXML
     public void initialize() {
         fetchAvailableGames();
     }
+
+    public class Game{
+        private StringProperty gameName;
+        private IntegerProperty numberOfPlayers;
+
+        public Game(String gameName, Integer numberOfPlayersConnected){
+            this.gameName.set(gameName);
+            this.numberOfPlayers.set(numberOfPlayersConnected);
+        }
+
+        public String getGameName() {
+            return gameName.get();
+        }
+
+        public StringProperty gameNameProperty() {
+            if(gameName == null) gameName = new SimpleStringProperty(this,"gameName");
+            return gameName;
+        }
+
+        public void setGameName(String gameName) {
+            this.gameName.set(gameName);
+        }
+
+        public String getNumberOfPlayers() {
+            return (numberOfPlayers.get() + "/4");
+        }
+
+        public IntegerProperty numberOfPlayersProperty() {
+            if(numberOfPlayers == null) numberOfPlayers = new SimpleIntegerProperty(0);
+            return numberOfPlayers;
+        }
+
+        public void setNumberOfPlayers(Integer numberOfPlayers) {
+            this.numberOfPlayers.set(numberOfPlayers);
+        }
+    }
+
 
     public void initData(String username) {
         welcomeLabel.setText("Welcome, " + username + "!");
@@ -49,28 +95,32 @@ public class MainPageController {
         if (!gameName.isEmpty()) {
             noGameNameLabel.setText("");
             createGame(gameName);
-        }
-        else
+        } else
             noGameNameLabel.setText("Please insert a game name before pressing on create!");
+    }
+
+    @FXML
+    private void handleRefreshButtonAction(){
+        fetchAvailableGames();
     }
 
     private void createGame(String gameName) {
         try {
             URL url = new URL(serverUrl + "/create_game");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+            HttpURLConnection connectionToServer = (HttpURLConnection) url.openConnection();
+            connectionToServer.setRequestMethod("POST");
+            connectionToServer.setRequestProperty("Content-Type", "application/json");
+            connectionToServer.setDoOutput(true);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("name", gameName);
 
-            try (OutputStream os = connection.getOutputStream()) {
+            try (OutputStream os = connectionToServer.getOutputStream()) {
                 byte[] requestBodyBytes = requestBody.toString().getBytes(StandardCharsets.UTF_8);
                 os.write(requestBodyBytes, 0, requestBodyBytes.length);
             }
 
-            int responseCode = connection.getResponseCode();
+            int responseCode = connectionToServer.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 System.out.println("Game created successfully");
             } else {
@@ -86,13 +136,13 @@ public class MainPageController {
     private void fetchAvailableGames() {
         try {
             URL url = new URL(serverUrl + "/games");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            HttpURLConnection connectionToServer = (HttpURLConnection) url.openConnection();
+            connectionToServer.setRequestMethod("GET");
 
-            int responseCode = connection.getResponseCode();
+            int responseCode = connectionToServer.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connectionToServer.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -102,21 +152,28 @@ public class MainPageController {
 
                 JSONArray jsonArray = new JSONArray(response.toString());
 
-                ObservableList<String> gamesList = FXCollections.observableArrayList();
+                ObservableList<Game> gamesList = FXCollections.observableArrayList();
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject gameObj = jsonArray.getJSONObject(i);
                     if (gameObj.get("name") instanceof JSONObject) {
                         JSONObject nameObj = gameObj.getJSONObject("name");
                         String gameName = nameObj.getString("name");
-                        gamesList.add(gameName);
+                        Integer playersConnected = nameObj.getInt("players");
+                        gamesList.add(new Game(gameName,playersConnected));
                     } else {
                         String gameName = gameObj.getString("name");
-                        gamesList.add(gameName);
+                        Integer playersConnected = gameObj.getInt("players");
+                        gamesList.add(new Game(gameName,playersConnected));
                     }
                 }
 
-                gameListView.setItems(gamesList);
+                gameTable.setItems(gamesList);
+                gameNameColumn.setCellFactory(new PropertyValueFactory("gameName"));
+                playersConnectedColumn.setCellFactory(new PropertyValueFactory("numberOfPlayers"));
+
+                gameTable.getColumns().setAll(gameNameColumn, playersConnectedColumn);
+
             } else {
                 System.out.println("Failed to fetch available games");
             }

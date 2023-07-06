@@ -20,9 +20,12 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="318.0" prefWidth="1080.0">
                      <children>
-            
-                         <ListView fx:id="gameListView" pickOnBounds="false" prefHeight="182.0" prefWidth="662.0">
-             </ListView>
+                        <TableView fx:id="gameTable" fixedCellSize="2.0" prefHeight="200.0" prefWidth="200.0">
+                          <columns>
+                            <TableColumn fx:id="gameNameColumn" prefWidth="75.0" sortable="false" text="Game Name" />
+                            <TableColumn fx:id="playersConnectedColumn" prefWidth="75.0" sortable="false" text="Players Connected" />
+                          </columns>
+                        </TableView>
                      </children>
                   </HBox>
                   <Label fx:id="noGameNameLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="41.0" prefWidth="664.0" text="" textFill="#f5f3f3">
@@ -35,6 +38,7 @@
              <HBox alignment="CENTER" prefHeight="81.0" prefWidth="1023.0" spacing="10">
                  <Button fx:id="createButton" onAction="#handleCreateButtonAction" text="Create" />
                  <Button fx:id="enterButton" text="Enter" />
+                 <Button fx:id="refreshButton" onAction="#handleRefreshButtonAction" text="Refresh" />
              </HBox>
          </children>
       </VBox>

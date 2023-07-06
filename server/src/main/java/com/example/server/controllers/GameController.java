@@ -9,8 +9,8 @@ import java.util.Map;
 
 @RestController
 public class GameController {
-    private List<Game> availableGames = new ArrayList<>();
-    private List<Game> startedGames = new ArrayList<>();
+    private final List<Game> availableGames = new ArrayList<>();
+    private final List<Game> startedGames = new ArrayList<>();
 
     @GetMapping("/games")
     public List<Game> getAvailableGames() {

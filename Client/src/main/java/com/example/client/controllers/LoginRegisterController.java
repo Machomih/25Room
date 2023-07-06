@@ -57,14 +57,15 @@ public class LoginRegisterController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty())
             warningLabel.setText("You need to insert both username and password");
-        } else {
+        else {
             String registerEndpoint = serverUrl + "/register";
             String registerPayload = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
             try {
                 sendPostRequest(registerEndpoint, registerPayload);
+
             } catch (IOException e) {
                 warningLabel.setText("Failed to connect to the server.");
             }
@@ -73,31 +74,32 @@ public class LoginRegisterController {
 
     private void sendPostRequest(String endpoint, String payload) throws IOException {
         URL url = new URL(endpoint);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
+        HttpURLConnection connectionToServer = (HttpURLConnection) url.openConnection();
+        connectionToServer.setRequestMethod("POST");
+        connectionToServer.setRequestProperty("Content-Type", "application/json");
+        connectionToServer.setDoOutput(true);
 
-        try (OutputStream outputStream = connection.getOutputStream()) {
+        try (OutputStream outputStream = connectionToServer.getOutputStream()) {
             byte[] payloadBytes = payload.getBytes();
             outputStream.write(payloadBytes, 0, payloadBytes.length);
         }
 
-        int responseCode = connection.getResponseCode();
+        int responseCode = connectionToServer.getResponseCode();
         System.out.println(responseCode);
+        System.out.println(connectionToServer.getResponseMessage());
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
             warningLabel.setText("Success");
             switchToMainPage();
         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
-            warningLabel.setText("Username already exists. Please choose a different username!");
+            warningLabel.setText(connectionToServer.getResponseMessage());
         } else
             warningLabel.setText("Username or password are invalid!");
 
-        connection.disconnect();
+        connectionToServer.disconnect();
     }
 
-    private void switchToMainPage(){
+    private void switchToMainPage() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/client/main-page.fxml"));
             Parent mainPageRoot = loader.load();
